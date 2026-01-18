@@ -61,22 +61,12 @@
 
   <main>
     <app-hero></app-hero>
-
-    @defer (on viewport) {
-      <app-solution></app-solution>
-      <app-benefits></app-benefits>
-      <app-how-it-works></app-how-it-works>
-      <app-testimonials></app-testimonials>
-      <app-faq></app-faq>
-      <app-contact></app-contact>
-    } @placeholder {
-      <section id="contents" class="defer-placeholder"></section>
-    }
+    <app-solution></app-solution>
+    <app-benefits></app-benefits>
+    <app-how-it-works></app-how-it-works>
+    <app-testimonials></app-testimonials>
+    <app-faq></app-faq>
+    <app-contact></app-contact>
   </main>
-
-  @defer (on viewport) {
-    <app-footer />
-  } @placeholder {
-    <section id="footer" class="defer-placeholder"></section>
-  }
+  <app-footer />
 </div>
