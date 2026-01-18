@@ -1,0 +1,73 @@
+<section class="hero section">
+  <div class="hero__bg" aria-hidden="true">
+    <div class="hero__blob hero__blob--one"></div>
+    <div class="hero__blob hero__blob--two"></div>
+    <div class="hero__blob hero__blob--three"></div>
+    <div class="hero__particles">
+      @for (_ of [0, 1, 2, 3, 4, 5, 6]; track $index) {
+        <span
+          class="hero__particle"
+          [style.left.%]="12 + $index * 12"
+          [style.top.%]="20 + ($index % 3) * 20"
+          [style.animationDelay]="$index * 0.3 + 's'"
+          [style.animationDuration]="3 + $index * 0.4 + 's'"
+        ></span>
+      }
+    </div>
+  </div>
+  <div class="container hero__content">
+    <div class="hero__inner stack stack--xl">
+      <div class="stack stack--lg">
+        <div animation="down">
+          <span class="hero__eyebrow">
+            <img src="/icons/sparkles-white.svg" alt="" class="hero__eyebrow-icon" />
+            Software para empresas - Venda consultiva
+          </span>
+        </div>
+
+        <h1 class="hero__title" animation="down" [revealDelay]="120">
+          A solução certa para sua operação, com
+          <span class="hero__highlight">
+            <span class="hero__highlight-text">implantação e suporte</span>
+            <span class="hero__underline"></span>
+          </span>
+        </h1>
+
+        <p class="hero__subtitle" animation="down" [revealDelay]="220">
+          Te ajudamos a escolher e implementar um software que reduza retrabalho, aumente
+          produtividade e organize seus dados - sem dor de cabeçaa.
+        </p>
+
+        <div class="hero__actions" animation="down" [revealDelay]="320">
+          <a href="#contato" class="button button--hero pulse-glow">
+            Solicitar diagnóstico gratuito
+            <img src="/icons/arrow-right-accent.svg" alt="" class="button__icon" />
+          </a>
+          <a href="#how-it-works" class="button button--hero-outline">
+            <img src="/icons/play-white.svg" alt="" class="button__icon" />
+            Ver como funciona
+          </a>
+        </div>
+      </div>
+
+      <div class="hero__stats">
+        @for (stat of stats; track $index) {
+          <div class="hero__stat glass-card" animation="fade" [revealDelay]="$index * 120 + 280">
+            <div class="hero__stat-icon">
+              @if (stat.icon == 'trending-up') {
+                <img src="/icons/trending-up-white.svg" alt="" />
+              }
+              @if (stat.icon == 'zap') {
+                <img src="/icons/zap-white.svg" alt="" />
+              }
+            </div>
+            <div class="hero__stat-text stack stack--xs">
+              <div class="hero__stat-value">{{ stat.value }}</div>
+              <div class="hero__stat-label">{{ stat.label }}</div>
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+</section>

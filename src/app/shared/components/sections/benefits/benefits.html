@@ -1,0 +1,35 @@
+<section id="benefits" class="benefits section">
+  <div class="benefits__glow benefits__glow--right"></div>
+  <div class="benefits__glow benefits__glow--left"></div>
+
+  <div class="container stack stack--lg">
+    <div class="section-header" animation="down">
+      <span class="section-header__eyebrow">Benefí­cios</span>
+      <h2 class="section-header__title">
+        Tudo o que sua operação <span class="gradient-text">precisa</span>
+      </h2>
+      <p class="section-header__subtitle">
+        Soluções pensadas para resolver problemas reais do dia a dia.
+      </p>
+    </div>
+
+    <div class="benefits__grid">
+      @for (benefit of benefits; track $index) {
+        <div
+          class="benefit-card card-modern"
+          [animation]="$index % 2 === 0 ? 'left' : 'right'"
+          [revealDelay]="$index * 100"
+        >
+          <div class="benefit-card__overlay"></div>
+          <div class="benefit-card__icon">
+            <img [src]="`/icons/${benefit.icon}-white.svg`" alt="" />
+          </div>
+          <div class="stack stack--xs">
+            <h3 class="benefit-card__title">{{ benefit.title }}</h3>
+            <p class="benefit-card__text">{{ benefit.description }}</p>
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+</section>

@@ -1,0 +1,82 @@
+<div class="landing">
+  <header class="site-header">
+    <div class="container">
+      <div class="site-header__inner" animation="down">
+        <a href="#" class="brand">
+          <div class="brand__logo">
+            <img src="/Logo.svg" alt="uFind" />
+            <div class="brand__glow"></div>
+          </div>
+          <span class="brand__text">uFind</span>
+        </a>
+
+        <nav class="site-nav">
+          @for (link of navLinks; track $index) {
+            <a [attr.href]="link.href" class="site-nav__link">
+              {{ link.label }}
+              <span class="site-nav__underline"></span>
+            </a>
+          }
+        </nav>
+
+        <div class="site-header__cta">
+          <a href="#contato" class="button button--primary"> Agendar demo </a>
+        </div>
+
+        <button
+          type="button"
+          class="menu-toggle"
+          (click)="toggleMenu()"
+          [attr.aria-label]="isMenuOpen() ? 'Fechar menu' : 'Abrir menu'"
+          [attr.aria-expanded]="isMenuOpen()"
+        >
+          <img
+            [src]="`/icons/${isMenuOpen() ? 'close' : 'menu'}-foreground.svg`"
+            alt=""
+            class="menu-toggle__icon"
+          />
+        </button>
+      </div>
+    </div>
+
+    <div class="mobile-menu-panel mobile-menu" [class.open]="isMenuOpen()">
+      <nav class="container mobile-nav">
+        <div class="mobile-nav__links">
+          @for (link of navLinks; track $index) {
+            <a [attr.href]="link.href" class="mobile-nav__link" (click)="closeMenu()">
+              {{ link.label }}
+            </a>
+          }
+        </div>
+        <a
+          href="#contato"
+          class="button button--primary button--full mobile-nav__cta"
+          (click)="closeMenu()"
+        >
+          Agendar demo
+        </a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <app-hero></app-hero>
+
+    @defer (on viewport) {
+      <app-solution></app-solution>
+      <app-benefits></app-benefits>
+      <app-how-it-works></app-how-it-works>
+      <app-testimonials></app-testimonials>
+      <app-faq></app-faq>
+      <app-contact></app-contact>
+    } @placeholder {
+      <section id="contents" class="defer-placeholder"></section>
+    }
+  </main>
+
+  @defer (on viewport) {
+    <app-footer />
+  } @placeholder {
+    <section id="footer" class="defer-placeholder"></section>
+  }
+</div>

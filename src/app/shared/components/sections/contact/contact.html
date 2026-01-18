@@ -1,0 +1,226 @@
+<section id="contato" class="contact section">
+  <div class="contact__glow contact__glow--right"></div>
+  <div class="contact__glow contact__glow--left"></div>
+
+  <div class="container">
+    <div class="contact__grid">
+      <div class="contact__intro stack stack--lg" animation="left">
+        <span class="section-header__eyebrow">Contato</span>
+        <h2 class="section-header__title">
+          Vamos entender seu <span class="gradient-text">cenário?</span>
+        </h2>
+        <p class="section-header__subtitle">
+          Envie seus dados e eu retorno com um diagnóstico rápido e uma demo focada no que você
+          precisa.
+        </p>
+
+        <div class="contact__info">
+          <div class="contact-info">
+            <div class="contact-info__icon contact-info__icon--blue">
+              <img src="/icons/clock-white.svg" alt="" />
+            </div>
+            <div class="stack stack--xs">
+              <p class="contact-info__title">Resposta em até 1 dia útil</p>
+              <p class="contact-info__text">Não deixamos você esperando</p>
+            </div>
+          </div>
+          <div class="contact-info">
+            <div class="contact-info__icon contact-info__icon--green">
+              <img src="/icons/rocket-white.svg" alt="" />
+            </div>
+            <div class="stack stack--xs">
+              <p class="contact-info__title">Implantação guiada</p>
+              <p class="contact-info__text">Do diagnóstico ao go-live</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="contact__actions">
+          <a
+            href="https://wa.me/5511984681559?text=Ol%C3%A1%2C%20gostaria%20de%20saber%20mais!"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="contact__action contact__action--whatsapp"
+          >
+            <img src="/icons/message-square-white.svg" alt="" />
+            WhatsApp
+          </a>
+          <a href="mailto:contato@ufind.app.br" class="contact__action contact__action--email">
+            <img src="/icons/mail-foreground.svg" alt="" />
+            contato@ufind.app.br
+          </a>
+        </div>
+      </div>
+
+      <div animation="right">
+        <div class="contact__panel" [class.is-loading]="isSubmitting()">
+          <div class="contact__panel-accent"></div>
+
+          @if (isSubmitted()) {
+            <div class="contact__success stack stack--sm">
+              <div class="contact__success-icon">
+                <img src="/icons/check-circle-white.svg" alt="" />
+              </div>
+              <h3 class="contact__success-title">Mensagem enviada!</h3>
+              <p class="contact__success-text">Entraremos em contato em breve.</p>
+            </div>
+          } @else {
+            <form
+              class="contact__form"
+              action="https://formsubmit.co/6bdf30e4ce769a7d77ea111ecc3948ca"
+              method="post"
+            >
+              <div class="contact__form-title">
+                <img src="/icons/sparkles-primary.svg" alt="" class="contact__form-icon" />
+                <span>Solicite seu diagnóstico gratuito</span>
+              </div>
+              <div class="form-grid">
+                <div
+                  class="form-field"
+                  [class.form-field--invalid]="showFieldError('name') && formErrors().name"
+                >
+                  <label for="name">Nome *</label>
+                  <input
+                    id="name"
+                    name="name"
+                    required
+                    placeholder="Seu nome"
+                    [value]="form().name"
+                    (input)="updateTextField('name', $event)"
+                    [attr.aria-invalid]="formErrors().name ? 'true' : 'false'"
+                  />
+                  @if (showFieldError('name') && formErrors().name) {
+                    <span class="form-field__error">{{ formErrors().name }}</span>
+                  }
+                </div>
+                <div
+                  class="form-field"
+                  [class.form-field--invalid]="showFieldError('company') && formErrors().company"
+                >
+                  <label for="company">Empresa *</label>
+                  <input
+                    id="company"
+                    name="company"
+                    required
+                    placeholder="Nome da empresa"
+                    [value]="form().company"
+                    (input)="updateTextField('company', $event)"
+                    [attr.aria-invalid]="formErrors().company ? 'true' : 'false'"
+                  />
+                  @if (showFieldError('company') && formErrors().company) {
+                    <span class="form-field__error">{{ formErrors().company }}</span>
+                  }
+                </div>
+              </div>
+              <div class="form-grid">
+                <div
+                  class="form-field"
+                  [class.form-field--invalid]="showFieldError('email') && formErrors().email"
+                >
+                  <label for="email">E-mail *</label>
+                  <input
+                    id="email"
+                    name="email"
+                    type="email"
+                    required
+                    placeholder="seu@email.com"
+                    [value]="form().email"
+                    (input)="handleEmailInput($event)"
+                    [attr.aria-invalid]="formErrors().email ? 'true' : 'false'"
+                  />
+                  @if (showFieldError('email') && formErrors().email) {
+                    <span class="form-field__error">{{ formErrors().email }}</span>
+                  }
+                </div>
+                <div
+                  class="form-field"
+                  [class.form-field--invalid]="showFieldError('phone') && formErrors().phone"
+                >
+                  <label for="phone">Telefone / WhatsApp *</label>
+                  <input
+                    id="phone"
+                    name="phone"
+                    type="tel"
+                    required
+                    placeholder="(11) 99999-9999"
+                    [value]="form().phone"
+                    (input)="handlePhoneInput($event)"
+                    [attr.aria-invalid]="formErrors().phone ? 'true' : 'false'"
+                  />
+                  @if (showFieldError('phone') && formErrors().phone) {
+                    <span class="form-field__error">{{ formErrors().phone }}</span>
+                  }
+                </div>
+              </div>
+              <div class="form-field">
+                <label for="objective">Objetivo principal</label>
+                <div class="select">
+                  <button
+                    id="objective"
+                    type="button"
+                    class="select__trigger"
+                    (click)="toggleObjective($event)"
+                    [attr.aria-expanded]="isObjectiveOpen()"
+                  >
+                    <span>
+                      {{ form().objective || 'Selecione um objetivo' }}
+                    </span>
+                    <img src="/icons/chevron-down-foreground.svg" alt="" class="select__chevron" />
+                  </button>
+                  @if (isObjectiveOpen()) {
+                    <div class="select__content">
+                      @for (objective of objectives; track $index) {
+                        <button
+                          type="button"
+                          class="select__item"
+                          (click)="selectObjective(objective, $event)"
+                        >
+                          {{ objective }}
+                        </button>
+                      }
+                    </div>
+                  }
+                </div>
+              </div>
+              <div class="form-field">
+                <label for="message">Mensagem (opcional)</label>
+                <textarea
+                  id="message"
+                  name="message"
+                  rows="4"
+                  placeholder="Conte um pouco sobre seu cenário atual..."
+                  [value]="form().message"
+                  (input)="updateTextField('message', $event)"
+                ></textarea>
+              </div>
+              <button
+                type="submit"
+                class="button button--primary button--full button--large"
+                [disabled]="isSubmitting()"
+              >
+                @if (isSubmitting()) {
+                  <span class="button__loading">Enviando...</span>
+                }
+                @if (!isSubmitting()) {
+                  <span class="button__content">
+                    Enviar e solicitar demo
+                    <img src="/icons/send-white.svg" alt="" class="button__icon" />
+                  </span>
+                }
+              </button>
+            </form>
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+@if (toast().show) {
+  <div class="toast">
+    <div class="toast__content stack stack--xs">
+      <p class="toast__title">{{ toast().title }}</p>
+      <p class="toast__description">{{ toast().description }}</p>
+    </div>
+  </div>
+}

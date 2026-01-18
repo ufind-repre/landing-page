@@ -1,0 +1,128 @@
+@use '../../../../../styles/mixins' as *;
+
+.faq {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background: var(--gradient-surface);
+
+  &__container {
+    max-width: 768px;
+    margin: 0 auto;
+  }
+
+  &__header {
+    text-align: center;
+  }
+
+  &__title {
+    font-family: var(--font-display);
+    font-weight: 700;
+    @include fluid-type(2rem, 2.5rem);
+    color: hsl(var(--foreground));
+  }
+
+  &__subtitle {
+    font-size: 1.125rem;
+    color: hsl(var(--muted-foreground));
+  }
+
+  &__list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+  }
+}
+
+.faq-item {
+  background: hsl(var(--card));
+  border-radius: var(--radius-lg);
+  border: 1px solid hsl(var(--border));
+  padding: 0 var(--space-6);
+  transition:
+    box-shadow var(--transition-fast),
+    border-color var(--transition-fast);
+
+  &--open {
+    box-shadow: var(--shadow-md);
+    border-color: hsl(var(--primary) / 0.25);
+  }
+
+  &__trigger {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-4);
+    padding: 20px 0;
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 1rem;
+    color: hsl(var(--foreground));
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    text-align: left;
+    transition: color var(--transition-fast);
+
+    &:hover {
+      color: hsl(var(--primary));
+    }
+
+    &:focus-visible {
+      @include focus-ring;
+    }
+  }
+
+  &__icon {
+    width: 16px;
+    height: 16px;
+    transition: transform var(--transition-fast);
+    aspect-ratio: 1 / 1;
+  }
+
+  &--open &__icon {
+    transform: rotate(180deg);
+  }
+
+  &__content {
+    display: grid;
+    grid-template-rows: 0fr;
+    overflow: hidden;
+    transition: grid-template-rows var(--transition-base);
+  }
+
+  &--open &__content {
+    grid-template-rows: 1fr;
+  }
+
+  &__inner {
+    overflow: hidden;
+    padding-bottom: 0;
+    opacity: 0;
+    transform: translateY(-6px);
+    transition:
+      opacity var(--transition-base),
+      transform var(--transition-base),
+      padding-bottom var(--transition-base);
+    color: hsl(var(--muted-foreground));
+    line-height: 1.7;
+  }
+
+  &--open &__inner {
+    opacity: 1;
+    transform: translateY(0);
+    padding-bottom: var(--space-5);
+  }
+}
+
+@media (max-width: 639px) {
+  .faq-item {
+    padding: 0 var(--space-3);
+  }
+
+  .faq-item__trigger {
+    padding: 16px 0;
+  }
+}

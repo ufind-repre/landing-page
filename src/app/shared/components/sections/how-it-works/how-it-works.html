@@ -1,0 +1,36 @@
+<section id="how-it-works" class="process section">
+  <div class="container stack stack--lg">
+    <div class="section-header section-header--light" animation="down">
+      <span class="section-header__eyebrow">Como funciona</span>
+      <h2 class="section-header__title">
+        Simples, rápido e
+        <b>sem surpresas</b>
+      </h2>
+      <p class="section-header__subtitle">Um processo claro do primeiro contato ao go-live.</p>
+    </div>
+
+    <div class="process__track">
+      @for (item of steps; track $index; let i = $index) {
+        <div class="process__slide">
+          <div
+            class="process-card glass-card"
+            [animation]="$index % 2 === 0 ? 'left' : 'right'"
+            [revealDelay]="$index * 120"
+          >
+            <div class="process-card__overlay"></div>
+            <div class="process-card__content stack stack--sm">
+              <div class="process-card__header">
+                <div class="process-card__icon">
+                  <img [src]="`/icons/${item.icon}-white.svg`" alt="" />
+                </div>
+                <span class="process-card__step">{{ item.step }}</span>
+              </div>
+              <h3 class="process-card__title">{{ item.title }}</h3>
+              <p class="process-card__text">{{ item.description }}</p>
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+</section>

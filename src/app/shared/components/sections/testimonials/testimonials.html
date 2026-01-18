@@ -1,0 +1,44 @@
+<section id="testimonials" class="testimonials section">
+  <div class="testimonials__glow testimonials__glow--left"></div>
+  <div class="testimonials__glow testimonials__glow--right"></div>
+
+  <div class="container stack stack--lg">
+    <div class="section-header" animation="down">
+      <span class="section-header__eyebrow">testimonials</span>
+      <h2 class="section-header__title">
+        O que nossos clientes <span class="gradient-text">dizem</span>
+      </h2>
+      <p class="section-header__subtitle">
+        Histórias reais de empresas que transformaram suas operações.
+      </p>
+    </div>
+
+    <div class="testimonials__grid">
+      @for (testimonial of testimonials; track $index) {
+        <div class="testimonial-card card-modern stack stack--md" animation="fade" [revealDelay]="$index * 140">
+          <div class="testimonial-card__overlay"></div>
+          <div class="testimonial-card__stars">
+            @for (star of [0, 1, 2, 3, 4]; track $index) {
+              <img src="/icons/star-warning.svg" alt="" class="testimonial-card__star" />
+            }
+          </div>
+          <div class="testimonial-card__quote">
+            <img [src]="testimonial.quoteIcon" alt="" class="testimonial-card__quote-icon" />
+            <p>"{{ testimonial.quote }}"</p>
+          </div>
+          <div class="testimonial-card__author">
+            <div class="testimonial-card__avatar">
+              <span>{{ testimonial.author.charAt(0) }}</span>
+            </div>
+            <div class="stack stack--xs">
+              <p class="testimonial-card__name">{{ testimonial.author }}</p>
+              <p class="testimonial-card__role">
+                {{ testimonial.role }} - {{ testimonial.company }}
+              </p>
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+</section>

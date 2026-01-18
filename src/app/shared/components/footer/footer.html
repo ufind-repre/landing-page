@@ -1,0 +1,38 @@
+<footer class="site-footer">
+  <div class="site-footer__glow site-footer__glow--left"></div>
+  <div class="site-footer__glow site-footer__glow--right"></div>
+
+  <div class="container">
+    <div class="site-footer__inner">
+      <div class="site-footer__brand" animation="fade">
+        <div class="brand__logo">
+          <img src="/Logo.svg" alt="uFind" />
+          <div class="brand__glow"></div>
+        </div>
+        <div>
+          <span class="site-footer__title">uFind</span>
+          <p class="site-footer__copy">© {{ currentYear }} Todos os direitos reservados.</p>
+        </div>
+      </div>
+
+      <div class="site-footer__links" animation="fade" [revealDelay]="120">
+        @for (label of ['Solução', 'Benefícios', 'Contato']; track $index) {
+          <a [attr.href]="'#' + label.toLowerCase()">
+            {{ label }}
+          </a>
+        }
+      </div>
+
+      <button
+        type="button"
+        class="site-footer__top"
+        aria-label="Voltar ao topo"
+        (click)="scrollToTop()"
+        animation="fade"
+        [revealDelay]="240"
+      >
+        <img src="/icons/arrow-up-white.svg" alt="" class="site-footer__top-icon" />
+      </button>
+    </div>
+  </div>
+</footer>

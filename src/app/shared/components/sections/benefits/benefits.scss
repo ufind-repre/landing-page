@@ -1,0 +1,130 @@
+@use '../../../../../styles/mixins' as *;
+
+.benefits {
+  position: relative;
+  min-height: 100vh;
+  background: hsl(var(--background));
+  overflow: hidden;
+
+  &__glow {
+    position: absolute;
+    border-radius: var(--radius-pill);
+    filter: blur(48px);
+    opacity: 0.4;
+
+    &--right {
+      top: 80px;
+      right: 80px;
+      width: 288px;
+      height: 288px;
+      background: hsl(var(--primary) / 0.1);
+    }
+
+    &--left {
+      bottom: 80px;
+      left: 80px;
+      width: 384px;
+      height: 384px;
+      background: hsl(var(--primary) / 0.05);
+    }
+  }
+
+  &__grid {
+    display: grid;
+    gap: var(--space-6);
+
+    @include sm {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    @include lg {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: var(--space-8);
+    }
+  }
+}
+
+.benefit-card {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--space-5);
+  padding: var(--space-6);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  @include interactive-lift(-6px);
+
+  &__overlay {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    transition: opacity var(--transition-slow);
+  }
+
+  &:hover &__overlay {
+    opacity: 0.05;
+  }
+
+  &__icon {
+    width: 52px;
+    height: 52px;
+    aspect-ratio: 1 / 1;
+    border-radius: var(--radius-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    box-shadow: 0 12px 24px hsl(var(--foreground) / 0.2);
+    background: var(--gradient-premium);
+
+    svg,
+    img {
+      width: 24px;
+      height: 24px;
+    }
+  }
+
+  &__title {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 1.125rem;
+    color: hsl(var(--foreground));
+    transition: color var(--transition-fast);
+  }
+
+  &:hover &__title {
+    color: hsl(var(--primary));
+  }
+
+  &__text {
+    font-size: 0.875rem;
+    color: hsl(var(--muted-foreground));
+    line-height: 1.6;
+  }
+}
+
+@media (max-width: 639px) {
+  .benefits__grid {
+    gap: var(--space-4);
+  }
+
+  .benefit-card {
+    padding: var(--space-5);
+    flex-direction: column;
+    gap: var(--space-3);
+    box-shadow: 0 14px 28px hsl(var(--foreground) / 0.06);
+  }
+
+  .benefit-card__icon {
+    width: 48px;
+    height: 48px;
+  }
+
+  .benefit-card__title {
+    font-size: 1.05rem;
+  }
+
+  .benefit-card__text {
+    font-size: 0.9rem;
+  }
+}
