@@ -16,9 +16,9 @@
       </div>
 
       <div class="site-footer__links" animation="fade" [revealDelay]="120">
-        @for (label of ['Solução', 'Benefícios', 'Contato']; track $index) {
-          <a [attr.href]="'#' + label.toLowerCase()">
-            {{ label }}
+        @for (nav of navLinks; track $index) {
+          <a [attr.href]="nav.href">
+            {{ nav.label }}
           </a>
         }
       </div>

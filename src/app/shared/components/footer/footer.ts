@@ -11,6 +11,12 @@ import { Animation } from '../../directives/animation/animation';
 export class Footer {
   protected readonly currentYear = new Date().getFullYear();
 
+  protected readonly navLinks = [
+    { href: '#solution', label: 'Solução' },
+    { href: '#benefits', label: 'Benefícios' },
+    { href: '#testimonials', label: 'Depoimentos' },
+  ];
+
   private readonly platformId = inject(PLATFORM_ID);
 
   protected scrollToTop(): void {
