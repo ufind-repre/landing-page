@@ -12,7 +12,7 @@ export class Faq {
     {
       question: 'Em quanto tempo meu sistema estará funcionando?',
       answer:
-        'O prazo médio é de 7 á 14 dias. Isso inclui configuração, migração de dados e treinamento da equipe. Casos mais complexos podem levar um pouco mais, mas você terá­ um cronograma claro desde o incío.',
+        'O prazo médio é de 7 a 14 dias. Isso inclui configuração, migração de dados e treinamento da equipe. Casos mais complexos podem levar um pouco mais, mas você terá­ um cronograma claro desde o incío.',
     },
     {
       question: 'Você fazem migração de dados?',

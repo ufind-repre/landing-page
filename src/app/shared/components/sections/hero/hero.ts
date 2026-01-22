@@ -9,7 +9,7 @@ import { Animation } from '../../../directives/animation/animation';
 })
 export class Hero {
   protected readonly stats = [
-    { icon: 'trending-up', value: '+30%', label: 'ganho de eficiência (média)' },
-    { icon: 'zap', value: 'de 7 à 14 dias', label: 'para ativar e treinar' },
+    { icon: 'trending-up', value: '+30%', label: 'GANHO DE EFICIÊNCIA MÉDIA' },
+    { icon: 'zap', value: 'DE 7 A 14 dias', label: 'PARA ATIVAR E TREINAR' },
   ];
 }

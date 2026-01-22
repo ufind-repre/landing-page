@@ -21,12 +21,12 @@ export class Benefits {
     },
     {
       icon: 'link-2',
-      title: 'IntegraÇõÇæes nativas',
+      title: 'Integrações nativas',
       description: 'Conecte ERP, CRM, WhatsApp e e-mail sem dor de cabeça.',
     },
     {
       icon: 'shield',
-      title: 'SeguranÇõa e permissÇæes',
+      title: 'Segurança e permissões',
       description: 'Controle quem vê e edita cada informação com níveis de acesso.',
     },
     {
