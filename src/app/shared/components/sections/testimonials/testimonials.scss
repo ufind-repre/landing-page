@@ -43,6 +43,9 @@
   padding: var(--space-8);
   border-radius: var(--radius-xl);
   overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
   @include interactive-lift(-8px);
 
   &__overlay {
@@ -97,6 +100,7 @@
   &__avatar {
     width: 56px;
     height: 56px;
+    aspect-ratio: 1 / 1;
     border-radius: var(--radius-pill);
     display: flex;
     align-items: center;
