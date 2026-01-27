@@ -1,4 +1,5 @@
-import { Component, computed, HostListener, signal } from '@angular/core';
+import { Component, HostListener, signal } from '@angular/core';
+import { email, form, FormField, required, submit, validate } from '@angular/forms/signals';
 import { Animation } from '../../../directives/animation/animation';
 
 type ContactForm = {
@@ -10,11 +11,9 @@ type ContactForm = {
   message: string;
 };
 
-type ContactErrors = Partial<Record<keyof ContactForm, string>>;
-
 @Component({
   selector: 'app-contact',
-  imports: [Animation],
+  imports: [Animation, FormField],
   templateUrl: './contact.html',
   styleUrl: './contact.scss',
 })
@@ -27,7 +26,7 @@ export class Contact {
     'Outro',
   ];
 
-  protected readonly form = signal<ContactForm>({
+  protected readonly formModel = signal<ContactForm>({
     name: '',
     company: '',
     email: '',
@@ -36,14 +35,28 @@ export class Contact {
     message: '',
   });
 
-  protected readonly formErrors = computed(() => this.validateForm(this.form()));
-  protected readonly isFormValid = computed(() => Object.keys(this.formErrors()).length === 0);
+  protected readonly form = form(this.formModel, (schema) => {
+    validate(schema.name, ({ value }) => {
+      const name = value().trim();
+      if (name.length < 2) return { kind: 'name', message: 'Informe seu nome.' };
+      return null;
+    });
+    validate(schema.company, ({ value }) => {
+      const company = value().trim();
+      if (company.length < 2) return { kind: 'company', message: 'Informe a empresa.' };
+      return null;
+    });
+    required(schema.email, { message: 'Informe seu e-mail.' });
+    email(schema.email, { message: 'E-mail invalido.' });
+    validate(schema.phone, ({ value }) => {
+      const digits = value().replace(/\D/g, '');
+      if (digits.length < 10) return { kind: 'phone', message: 'Informe um telefone valido.' };
+      return null;
+    });
+  });
 
-  protected readonly isSubmitting = signal(false);
   protected readonly isSubmitted = signal(false);
   protected readonly isObjectiveOpen = signal(false);
-  protected readonly submitAttempted = signal(false);
-  protected readonly touched = signal<Partial<Record<keyof ContactForm, boolean>>>({});
   protected readonly toast = signal({
     show: false,
     title: '',
@@ -52,65 +65,58 @@ export class Contact {
 
   protected async handleSubmit(event: Event): Promise<void> {
     event.preventDefault();
-    if (this.isSubmitting()) return;
 
-    this.submitAttempted.set(true);
-    if (!this.isFormValid())
-      return this.showToast('Revise os campos', 'Preencha os dados obrigatórios corretamente.');
+    await submit(this.form, async () => {
+      const payload = this.serializeForm();
+      const emailPayload = this.buildEmailPayload(payload);
 
-    this.isSubmitting.set(true);
-    const payload = this.serializeForm();
+      try {
+        const response = await fetch('https://ufind-vercel.vercel.app/api', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Accept: 'application/json',
+          },
+          body: JSON.stringify(emailPayload),
+        });
 
-    try {
-      const response = await fetch('https://formsubmit.co/6bdf30e4ce769a7d77ea111ecc3948ca', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-          Accept: 'application/json',
-        },
-        body: new URLSearchParams(payload),
-      });
+        if (!response.ok) throw new Error('Erro ao enviar.');
 
-      if (!response.ok) throw new Error('Erro ao enviar.');
+        this.isSubmitted.set(true);
+        this.showToast('Mensagem enviada!', 'Retornaremos em ate 1 dia util.');
+        this.formModel.set({
+          name: '',
+          company: '',
+          email: '',
+          phone: '',
+          objective: '',
+          message: '',
+        });
+      } catch {
+        this.showToast('Falha no envio', 'Tente novamente em instantes.');
+      }
 
-      this.isSubmitted.set(true);
-      this.showToast('Mensagem enviada!', 'Retornaremos em ate 1 dia util.');
-      this.form.set({
-        name: '',
-        company: '',
-        email: '',
-        phone: '',
-        objective: '',
-        message: '',
-      });
-    } catch {
-      this.showToast('Falha no envio', 'Tente novamente em instantes.');
-    } finally {
-      this.isSubmitting.set(false);
+      return undefined;
+    });
+
+    if (this.form().invalid()) {
+      this.showToast('Revise os campos', 'Preencha os dados obrigatorios corretamente.');
     }
-  }
-
-  protected updateTextField(field: keyof ContactForm, event: Event): void {
-    const value = (event.target as HTMLInputElement).value;
-    this.updateField(field, value);
-    this.markTouched(field);
   }
 
   protected handleEmailInput(event: Event): void {
     const value = (event.target as HTMLInputElement).value;
-    this.updateField('email', this.normalizeEmail(value));
-    this.markTouched('email');
+    this.form.email().value.set(this.normalizeEmail(value));
   }
 
   protected handlePhoneInput(event: Event): void {
     const value = (event.target as HTMLInputElement).value;
-    this.updateField('phone', this.formatPhone(value));
-    this.markTouched('phone');
+    this.form.phone().value.set(this.formatPhone(value));
   }
 
   protected selectObjective(value: string, event: MouseEvent): void {
     event.stopPropagation();
-    this.updateField('objective', value);
+    this.form.objective().value.set(value);
     this.isObjectiveOpen.set(false);
   }
 
@@ -127,41 +133,6 @@ export class Contact {
   protected showToast(title: string, description: string): void {
     this.toast.set({ show: true, title, description });
     setTimeout(() => this.toast.set({ show: false, title: '', description: '' }), 3000);
-  }
-
-  protected showFieldError(field: keyof ContactForm): boolean {
-    return Boolean(this.submitAttempted() || this.touched()[field]);
-  }
-
-  private updateField(field: keyof ContactForm, value: string): void {
-    this.form.update((current) => ({ ...current, [field]: value }));
-  }
-
-  private markTouched(field: keyof ContactForm): void {
-    this.touched.update((current) => ({ ...current, [field]: true }));
-  }
-
-  private validateForm(data: ContactForm): ContactErrors {
-    const errors: ContactErrors = {};
-    const name = data.name.trim();
-    const company = data.company.trim();
-    const email = this.normalizeEmail(data.email);
-    const phoneDigits = data.phone.replace(/\D/g, '');
-
-    if (name.length < 2) errors.name = 'Informe seu nome.';
-    if (company.length < 2) errors.company = 'Informe a empresa.';
-
-    if (!email) {
-      errors.email = 'Informe seu e-mail.';
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      errors.email = 'E-mail invalido.';
-    }
-
-    if (phoneDigits.length < 10) {
-      errors.phone = 'Informe um telefone valido.';
-    }
-
-    return errors;
   }
 
   private normalizeEmail(value: string): string {
@@ -185,8 +156,8 @@ export class Contact {
     });
   }
 
-  private serializeForm(): Record<string, string> {
-    const data = this.form();
+  private serializeForm(): ContactForm {
+    const data = this.formModel();
     return {
       name: data.name.trim(),
       company: data.company.trim(),
@@ -195,5 +166,41 @@ export class Contact {
       objective: data.objective,
       message: data.message.trim(),
     };
+  }
+
+  private buildEmailPayload(data: ContactForm): Record<string, string> {
+    const objective = data.objective || 'Não informado';
+    const message = data.message || 'Não informada';
+    const safe = (value: string) => this.escapeHtml(value);
+
+    return {
+      subject: `Novo contato - ${data.name}`,
+      text: [
+        `Nome: ${data.name}`,
+        `Empresa: ${data.company}`,
+        `E-mail: ${data.email}`,
+        `Telefone: ${data.phone}`,
+        `Objetivo: ${objective}`,
+        `Mensagem: ${message}`,
+      ].join('\n'),
+      html: [
+        `<p><strong>Nome:</strong> ${safe(data.name)}</p>`,
+        `<p><strong>Empresa:</strong> ${safe(data.company)}</p>`,
+        `<p><strong>E-mail:</strong> ${safe(data.email)}</p>`,
+        `<p><strong>Telefone:</strong> ${safe(data.phone)}</p>`,
+        `<p><strong>Objetivo:</strong> ${safe(objective)}</p>`,
+        `<p><strong>Mensagem:</strong> ${safe(message)}</p>`,
+      ].join(''),
+      replyTo: data.email,
+    };
+  }
+
+  private escapeHtml(value: string): string {
+    return value
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
   }
 }

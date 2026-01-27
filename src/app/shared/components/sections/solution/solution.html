@@ -20,20 +20,12 @@
         >
           <div class="solution-card__overlay"></div>
           <div class="solution-card__icon">
-            @if (solution.icon == 'search') {
-              <img src="/icons/search-white.svg" alt="" />
-            }
-            @if (solution.icon == 'rocket') {
-              <img src="/icons/rocket-white.svg" alt="" />
-            }
-            @if (solution.icon == 'headphones') {
-              <img src="/icons/headphones-white.svg" alt="" />
-            }
+            <img [src]="`/icons/${solution.icon}-white.svg`" alt="" />
           </div>
           <div class="stack stack--xs">
             <h3 class="solution-card__title">{{ solution.title }}</h3>
             <p class="solution-card__text">{{ solution.description }}</p>
-            <a href="#contato" class="solution-card__link">
+            <a href="#contact" class="solution-card__link">
               Saiba mais
               <img src="/icons/arrow-right-primary.svg" alt="" class="solution-card__link-icon" />
             </a>

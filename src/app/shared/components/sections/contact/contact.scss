@@ -396,6 +396,11 @@
     padding: var(--space-5);
   }
 
+  .contact__success {
+    align-items: center;
+    text-align: center;
+  }
+
   .form-field input {
     min-height: 44px;
   }

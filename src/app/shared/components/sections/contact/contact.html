@@ -53,7 +53,7 @@
       </div>
 
       <div animation="right">
-        <div class="contact__panel" [class.is-loading]="isSubmitting()">
+        <div class="contact__panel" [class.is-loading]="form().submitting()">
           <div class="contact__panel-accent"></div>
 
           @if (isSubmitted()) {
@@ -65,11 +65,7 @@
               <p class="contact__success-text">Entraremos em contato em breve.</p>
             </div>
           } @else {
-            <form
-              class="contact__form"
-              action="https://formsubmit.co/6bdf30e4ce769a7d77ea111ecc3948ca"
-              method="post"
-            >
+            <form class="contact__form" (submit)="handleSubmit($event)">
               <div class="contact__form-title">
                 <img src="/icons/sparkles-primary.svg" alt="" class="contact__form-icon" />
                 <span>Solicite seu diagnóstico gratuito</span>
@@ -77,78 +73,76 @@
               <div class="form-grid">
                 <div
                   class="form-field"
-                  [class.form-field--invalid]="showFieldError('name') && formErrors().name"
+                  [class.form-field--invalid]="form.name().touched() && form.name().invalid()"
                 >
                   <label for="name">Nome *</label>
                   <input
                     id="name"
-                    name="name"
-                    required
                     placeholder="Seu nome"
-                    [value]="form().name"
-                    (input)="updateTextField('name', $event)"
-                    [attr.aria-invalid]="formErrors().name ? 'true' : 'false'"
+                    [formField]="form.name"
+                    [attr.aria-invalid]="form.name().invalid() ? 'true' : 'false'"
                   />
-                  @if (showFieldError('name') && formErrors().name) {
-                    <span class="form-field__error">{{ formErrors().name }}</span>
+                  @if (form.name().touched() && form.name().invalid()) {
+                    <span class="form-field__error">
+                      {{ form.name().errors()[0]?.message || 'Campo invalido.' }}
+                    </span>
                   }
                 </div>
                 <div
                   class="form-field"
-                  [class.form-field--invalid]="showFieldError('company') && formErrors().company"
+                  [class.form-field--invalid]="form.company().touched() && form.company().invalid()"
                 >
                   <label for="company">Empresa *</label>
                   <input
                     id="company"
-                    name="company"
-                    required
                     placeholder="Nome da empresa"
-                    [value]="form().company"
-                    (input)="updateTextField('company', $event)"
-                    [attr.aria-invalid]="formErrors().company ? 'true' : 'false'"
+                    [formField]="form.company"
+                    [attr.aria-invalid]="form.company().invalid() ? 'true' : 'false'"
                   />
-                  @if (showFieldError('company') && formErrors().company) {
-                    <span class="form-field__error">{{ formErrors().company }}</span>
+                  @if (form.company().touched() && form.company().invalid()) {
+                    <span class="form-field__error">
+                      {{ form.company().errors()[0]?.message || 'Campo invalido.' }}
+                    </span>
                   }
                 </div>
               </div>
               <div class="form-grid">
                 <div
                   class="form-field"
-                  [class.form-field--invalid]="showFieldError('email') && formErrors().email"
+                  [class.form-field--invalid]="form.email().touched() && form.email().invalid()"
                 >
                   <label for="email">E-mail *</label>
                   <input
                     id="email"
-                    name="email"
                     type="email"
-                    required
                     placeholder="seu@email.com"
-                    [value]="form().email"
+                    [formField]="form.email"
                     (input)="handleEmailInput($event)"
-                    [attr.aria-invalid]="formErrors().email ? 'true' : 'false'"
+                    [attr.aria-invalid]="form.email().invalid() ? 'true' : 'false'"
                   />
-                  @if (showFieldError('email') && formErrors().email) {
-                    <span class="form-field__error">{{ formErrors().email }}</span>
+                  @if (form.email().touched() && form.email().invalid()) {
+                    <span class="form-field__error">
+                      {{ form.email().errors()[0]?.message || 'Campo invalido.' }}
+                    </span>
                   }
                 </div>
                 <div
                   class="form-field"
-                  [class.form-field--invalid]="showFieldError('phone') && formErrors().phone"
+                  [class.form-field--invalid]="form.phone().touched() && form.phone().invalid()"
                 >
                   <label for="phone">Telefone / WhatsApp *</label>
                   <input
                     id="phone"
-                    name="phone"
                     type="tel"
-                    required
                     placeholder="(11) 99999-9999"
-                    [value]="form().phone"
+                    [formField]="form.phone"
                     (input)="handlePhoneInput($event)"
-                    [attr.aria-invalid]="formErrors().phone ? 'true' : 'false'"
+                    [attr.aria-invalid]="form.phone().invalid() ? 'true' : 'false'"
                   />
-                  @if (showFieldError('phone') && formErrors().phone) {
-                    <span class="form-field__error">{{ formErrors().phone }}</span>
+                  @if (form.phone().touched() && form.phone().invalid()) {
+                    <span class="form-field__error">
+                      {{ form.phone().errors()[0]?.message || 'Campo invalido.' }}
+                    </span>
                   }
                 </div>
               </div>
@@ -163,7 +157,7 @@
                     [attr.aria-expanded]="isObjectiveOpen()"
                   >
                     <span>
-                      {{ form().objective || 'Selecione um objetivo' }}
+                      {{ form.objective().value() || 'Selecione um objetivo' }}
                     </span>
                     <img src="/icons/chevron-down-foreground.svg" alt="" class="select__chevron" />
                   </button>
@@ -186,22 +180,20 @@
                 <label for="message">Mensagem (opcional)</label>
                 <textarea
                   id="message"
-                  name="message"
                   rows="4"
                   placeholder="Conte um pouco sobre seu cenário atual..."
-                  [value]="form().message"
-                  (input)="updateTextField('message', $event)"
+                  [formField]="form.message"
                 ></textarea>
               </div>
               <button
                 type="submit"
                 class="button button--primary button--full button--large"
-                [disabled]="isSubmitting()"
+                [disabled]="form().submitting()"
               >
-                @if (isSubmitting()) {
+                @if (form().submitting()) {
                   <span class="button__loading">Enviando...</span>
                 }
-                @if (!isSubmitting()) {
+                @if (!form().submitting()) {
                   <span class="button__content">
                     Enviar e solicitar demo
                     <img src="/icons/send-white.svg" alt="" class="button__icon" />
