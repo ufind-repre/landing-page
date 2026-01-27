@@ -62,6 +62,7 @@ export class Contact {
     title: '',
     description: '',
   });
+  private readonly phoneDigits = signal('');
 
   protected async handleSubmit(event: Event): Promise<void> {
     event.preventDefault();
@@ -92,6 +93,7 @@ export class Contact {
           objective: '',
           message: '',
         });
+        this.phoneDigits.set('');
       } catch {
         this.showToast('Falha no envio', 'Tente novamente em instantes.');
       }
@@ -110,8 +112,19 @@ export class Contact {
   }
 
   protected handlePhoneInput(event: Event): void {
-    const value = (event.target as HTMLInputElement).value;
-    this.form.phone().value.set(this.formatPhone(value));
+    const input = event.target as HTMLInputElement;
+    const inputEvent = event as InputEvent;
+    const rawDigits = input.value.replace(/\D/g, '');
+    const hasPrefix = input.value.trim().startsWith('+') || rawDigits.length > 11;
+    let digits = rawDigits;
+
+    if (inputEvent?.inputType == 'deleteContentBackward' && digits == this.phoneDigits())
+      digits = digits.slice(0, -1);
+
+    this.phoneDigits.set(digits);
+    const formatted = this.formatPhone(digits, hasPrefix);
+    input.value = formatted;
+    this.form.phone().value.set(formatted);
   }
 
   protected selectObjective(value: string, event: MouseEvent): void {
@@ -139,21 +152,50 @@ export class Contact {
     return value.replace(/\s+/g, '').toLowerCase();
   }
 
-  private formatPhone(value: string): string {
-    const digits = value.replace(/\D/g, '').slice(0, 11);
-    if (digits.length <= 10) {
-      return digits.replace(/^(\d{0,2})(\d{0,4})(\d{0,4}).*$/, (_match, ddd, part1, part2) => {
-        const area = ddd ? `(${ddd}` + (ddd.length === 2 ? ') ' : '') : '';
+  private formatPhone(value: string, hasPrefix = false): string {
+    const digits = value.replace(/\D/g, '');
+    const formatLocal = (local: string): string => {
+      const localDigits = local.slice(0, 11);
+      if (localDigits.length <= 10)
+        return localDigits.replace(
+          /^(\d{0,2})(\d{0,4})(\d{0,4}).*$/,
+          (_match, ddd, part1, part2) => {
+            const area = ddd ? `( ${ddd}` + (ddd.length === 2 ? ' ) ' : '') : '';
+            const mid = part1 ? part1 + (part2 ? '-' : '') : '';
+            return `${area}${mid}${part2}`;
+          },
+        );
+
+      return localDigits.replace(/^(\d{0,2})(\d{0,5})(\d{0,4}).*$/, (_match, ddd, part1, part2) => {
+        const area = ddd ? `( ${ddd}` + (ddd.length === 2 ? ' ) ' : '') : '';
         const mid = part1 ? part1 + (part2 ? '-' : '') : '';
         return `${area}${mid}${part2}`;
       });
-    }
+    };
 
-    return digits.replace(/^(\d{0,2})(\d{0,5})(\d{0,4}).*$/, (_match, ddd, part1, part2) => {
-      const area = ddd ? `(${ddd}` + (ddd.length === 2 ? ') ' : '') : '';
-      const mid = part1 ? part1 + (part2 ? '-' : '') : '';
-      return `${area}${mid}${part2}`;
-    });
+    if (!hasPrefix) return formatLocal(digits);
+
+    if (digits.length > 11 && digits.length <= 13)
+      return `+${digits.slice(0, 2)} ${formatLocal(digits.slice(2))}`;
+
+    if (digits.length <= 3) return `+${digits}`;
+
+    const maxLocal11 = Math.min(11, digits.length);
+    const countryLen11 = digits.length - maxLocal11;
+    if (countryLen11 >= 1 && countryLen11 <= 3)
+      return `+${digits.slice(0, countryLen11)} ${formatLocal(digits.slice(countryLen11))}`;
+
+    const maxLocal10 = Math.min(10, digits.length);
+    const countryLen10 = digits.length - maxLocal10;
+    if (countryLen10 >= 1 && countryLen10 <= 3)
+      return `+${digits.slice(0, countryLen10)} ${formatLocal(digits.slice(countryLen10))}`;
+
+    const fallbackCountryLen = Math.min(3, Math.max(1, digits.length - 10));
+    const fallbackCountry = digits.slice(0, fallbackCountryLen);
+    const fallbackLocal = digits.slice(fallbackCountryLen);
+    return fallbackLocal
+      ? `+${fallbackCountry} ${formatLocal(fallbackLocal)}`
+      : `+${fallbackCountry}`;
   }
 
   private serializeForm(): ContactForm {
